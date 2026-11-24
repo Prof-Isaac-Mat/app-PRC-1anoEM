@@ -1,0 +1,1865 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>Geometria Analítica Interativa — 1º Ano</title>
+  <meta name="description" content="Laboratório interativo de Geometria Analítica para o 1º ano do Ensino Médio." />
+  <meta name="theme-color" content="#1B4F72" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Geom. Analítica" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" type="image/png" href="./icon-192.png" />
+  <link rel="apple-touch-icon" href="./icon-192.png" />
+  <style>
+    :root {
+      --primary: #1B4F72;
+      --primary-dark: #154360;
+      --accent: #2874A6;
+      --accent-light: #EBF5FB;
+      --green: #0E6251;
+      --green-bg: #E8F8F5;
+      --amber: #9A7D0A;
+      --amber-bg: #FEF9E7;
+      --red: #922B21;
+      --red-bg: #FDEDEC;
+      --bg: #F4F6F9;
+      --card: #FFFFFF;
+      --text: #1C2833;
+      --muted: #566573;
+      --border: #D5D8DC;
+      --shadow: 0 2px 10px rgba(27, 79, 114, 0.08);
+      --radius: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: #FFFFFF;
+      padding: 12px 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.14);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .header-title h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+
+    .header-title p {
+      font-size: 0.8rem;
+      color: #AED6F1;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #btnInstallApp {
+      display: none;
+      background-color: #F5B041;
+      color: #1C2833;
+      border: none;
+      border-radius: 6px;
+      padding: 7px 13px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s, background-color 0.15s;
+    }
+
+    #btnInstallApp:hover {
+      background-color: #F8C471;
+      transform: translateY(-1px);
+    }
+
+    /* Navigation Tabs */
+    nav.tabs {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      overflow-x: auto;
+      padding: 0 12px;
+      gap: 4px;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      padding: 11px 15px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: color 0.15s, border-color 0.15s, background-color 0.15s;
+    }
+
+    .tab-btn:hover {
+      color: var(--primary);
+      background-color: var(--accent-light);
+    }
+
+    .tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      background-color: #F8FBFD;
+    }
+
+    /* Main Workspace */
+    main {
+      flex: 1;
+      max-width: 1320px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 14px;
+      display: grid;
+      grid-template-columns: minmax(320px, 1.15fr) minmax(320px, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Canvas Card */
+    .canvas-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      top: 12px;
+    }
+
+    @media (max-width: 900px) {
+      .canvas-card {
+        position: static;
+      }
+    }
+
+    .canvas-toolbar {
+      background: #F8F9F9;
+      border-bottom: 1px solid var(--border);
+      padding: 8px 12px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 0.82rem;
+    }
+
+    .coord-readout {
+      font-family: "Consolas", "Courier New", monospace;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--accent-light);
+      padding: 3px 9px;
+      border-radius: 5px;
+      border: 1px solid #AED6F1;
+    }
+
+    .toolbar-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+    }
+
+    .toolbar-controls label {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .btn-small {
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 3px 9px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .btn-small:hover {
+      background: var(--accent-light);
+      border-color: var(--accent);
+    }
+
+    .canvas-wrapper {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      max-height: 540px;
+      position: relative;
+      background: #FFFFFF;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: none;
+      cursor: crosshair;
+    }
+
+    .canvas-hint {
+      padding: 6px 12px;
+      background: #F8F9F9;
+      border-top: 1px solid var(--border);
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /* Right Panel */
+    .panel-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .mode-switch {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: var(--bg);
+      padding: 4px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .mode-btn {
+      border: none;
+      background: none;
+      padding: 8px 10px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border-radius: 6px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .mode-btn.active {
+      background: var(--primary);
+      color: #FFFFFF;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+    }
+
+    .section-title {
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: var(--primary);
+      border-bottom: 2px solid var(--accent-light);
+      padding-bottom: 4px;
+    }
+
+    .inputs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+      gap: 8px;
+    }
+
+    .point-box {
+      background: #F8F9F9;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 8px 10px;
+    }
+
+    .point-box-header {
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .coord-inputs {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.82rem;
+    }
+
+    .coord-inputs input {
+      width: 56px;
+      padding: 4px 6px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 0.85rem;
+      text-align: center;
+    }
+
+    .preset-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .preset-btn {
+      background: var(--accent-light);
+      color: var(--primary);
+      border: 1px solid #AED6F1;
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .preset-btn:hover {
+      background: #D6EAF8;
+    }
+
+    /* Step-by-step Algebra Card */
+    .algebra-box {
+      background: #F8FBFD;
+      border: 1px solid #AED6F1;
+      border-left: 4px solid var(--accent);
+      border-radius: 7px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .step-item {
+      font-size: 0.88rem;
+      padding-bottom: 6px;
+      border-bottom: 1px dashed #D6EAF8;
+    }
+
+    .step-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .step-label {
+      font-weight: 700;
+      color: var(--primary);
+      display: block;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .math-line {
+      font-family: "Cambria Math", "Times New Roman", Georgia, serif;
+      font-size: 1.02rem;
+      color: #1C2833;
+      margin-top: 2px;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.84rem;
+      font-weight: 700;
+    }
+
+    .badge-green {
+      background: var(--green-bg);
+      color: var(--green);
+      border: 1px solid #A3E4D7;
+    }
+
+    .badge-amber {
+      background: var(--amber-bg);
+      color: var(--amber);
+      border: 1px solid #F9E79F;
+    }
+
+    .badge-red {
+      background: var(--red-bg);
+      color: var(--red);
+      border: 1px solid #F5B7B1;
+    }
+
+    .badge-blue {
+      background: var(--accent-light);
+      color: var(--primary);
+      border: 1px solid #AED6F1;
+    }
+
+    /* Exercises Section */
+    .ex-selector {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .ex-num-btn {
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: #FFFFFF;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .ex-num-btn.active {
+      background: var(--primary);
+      color: #FFFFFF;
+      border-color: var(--primary);
+    }
+
+    .ex-num-btn.solved {
+      border-color: #27AE60;
+      color: var(--green);
+    }
+
+    .ex-num-btn.active.solved {
+      background: var(--green);
+      color: #FFFFFF;
+    }
+
+    .ex-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .ex-prompt {
+      font-size: 0.93rem;
+      color: var(--text);
+    }
+
+    .ex-input-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .ex-input-row input,
+    .ex-input-row select {
+      flex: 1;
+      min-width: 160px;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.92rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #FFFFFF;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 16px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-secondary {
+      background: #F4F6F7;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .feedback-box {
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      display: none;
+    }
+
+    .feedback-box.ok {
+      display: block;
+      background: var(--green-bg);
+      color: var(--green);
+      border: 1px solid #A3E4D7;
+    }
+
+    .feedback-box.err {
+      display: block;
+      background: var(--red-bg);
+      color: var(--red);
+      border: 1px solid #F5B7B1;
+    }
+
+    .hint-box {
+      display: none;
+      background: var(--amber-bg);
+      color: #5D4037;
+      border: 1px solid #F9E79F;
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 0.85rem;
+    }
+
+    .hint-box.visible {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-title">
+    <h1>Geometria Analítica Interativa — 1º Ano</h1>
+    <p>Alinhamento de Pontos • Equação da Reta • Posições Relativas • Circunferência</p>
+  </div>
+  <div class="header-actions">
+    <button id="btnInstallApp" type="button">Instalar Aplicativo</button>
+  </div>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button class="tab-btn active" data-module="colinear">1. Alinhamento de 3 Pontos</button>
+  <button class="tab-btn" data-module="reta">2. Equação da Reta</button>
+  <button class="tab-btn" data-module="posicoes">3. Posições Relativas</button>
+  <button class="tab-btn" data-module="circunferencia">4. Circunferência</button>
+</nav>
+
+<main>
+  <!-- Left: Interactive Cartesian Plane -->
+  <section class="canvas-card">
+    <div class="canvas-toolbar">
+      <span class="coord-readout" id="cursorCoords">Cursor: (0, 0)</span>
+      <div class="toolbar-controls">
+        <label>
+          <input type="checkbox" id="snapGrid" checked />
+          Grade inteira
+        </label>
+        <button type="button" class="btn-small" id="btnResetView">Resetar</button>
+      </div>
+    </div>
+    <div class="canvas-wrapper">
+      <canvas id="planeCanvas"></canvas>
+    </div>
+    <div class="canvas-hint" id="canvasHint">
+      Arraste os pontos diretamente no plano cartesiano ou altere as coordenadas ao lado.
+    </div>
+  </section>
+
+  <!-- Right: Controls, Step-by-Step Algebra & Guided Exercises -->
+  <section class="panel-card">
+    <div class="mode-switch">
+      <button type="button" class="mode-btn active" data-mode="explore">Modo Exploração</button>
+      <button type="button" class="mode-btn" data-mode="exercise">Exercícios Guiados</button>
+    </div>
+
+    <div id="dynamicPanel"></div>
+  </section>
+</main>
+
+<script>
+// ==========================================
+// PWA INSTALLATION & SERVICE WORKER
+// ==========================================
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+
+let deferredPrompt = null;
+const btnInstallApp = document.getElementById('btnInstallApp');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  btnInstallApp.style.display = 'inline-block';
+});
+
+btnInstallApp.addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  btnInstallApp.style.display = 'none';
+});
+
+window.addEventListener('appinstalled', () => {
+  btnInstallApp.style.display = 'none';
+});
+
+// ==========================================
+// APPLICATION STATE
+// ==========================================
+const state = {
+  module: 'colinear',
+  mode: 'explore',
+  snap: true,
+  range: 8,
+  cursor: { x: 0, y: 0 },
+  dragging: null,
+  solved: {},
+
+  colinear: {
+    A: { x: -2, y: -1 },
+    B: { x: 1, y: 2 },
+    C: { x: 4, y: 5 },
+    exIdx: 0
+  },
+
+  reta: {
+    A: { x: -1, y: 1 },
+    B: { x: 2, y: 7 },
+    t: 0.5,
+    exIdx: 0
+  },
+
+  posicoes: {
+    mr: 2,
+    qr: -1,
+    ms: -0.5,
+    qs: 4,
+    exIdx: 0
+  },
+
+  circunferencia: {
+    C: { x: 1, y: 1 },
+    r: 4,
+    P: { x: 4, y: 3 },
+    exIdx: 0
+  }
+};
+
+// ==========================================
+// EXERCISES BANK
+// ==========================================
+const EXERCISES = {
+  colinear: [
+    {
+      prompt: "Verifique se os pontos A(1, 2), B(3, 6) e C(5, 10) estão alinhados (são colineares).",
+      type: "select",
+      options: ["Sim, são colineares", "Não são colineares"],
+      answer: "Sim, são colineares",
+      hint: "Calcule m_AB = (6 - 2)/(3 - 1) = 4/2 = 2 e m_BC = (10 - 6)/(5 - 3) = 4/2 = 2. Como m_AB = m_BC, estão alinhados.",
+      setup: () => {
+        state.colinear.A = { x: 1, y: 2 };
+        state.colinear.B = { x: 3, y: 6 };
+        state.colinear.C = { x: 5, y: 10 };
+      }
+    },
+    {
+      prompt: "Dados A(-2, 1), B(1, 4) e C(4, 5), determine o valor do coeficiente angular m_AB entre os pontos A e B.",
+      type: "number",
+      answer: 1,
+      hint: "Use m_AB = (y_B - y_A) / (x_B - x_A) = (4 - 1) / (1 - (-2)) = 3 / 3 = 1.",
+      setup: () => {
+        state.colinear.A = { x: -2, y: 1 };
+        state.colinear.B = { x: 1, y: 4 };
+        state.colinear.C = { x: 4, y: 5 };
+      }
+    },
+    {
+      prompt: "Determine o valor de k para que os pontos A(0, -1), B(2, 3) e C(4, k) sejam colineares.",
+      type: "number",
+      answer: 7,
+      hint: "Primeiro ache m_AB = (3 - (-1)) / (2 - 0) = 4/2 = 2. Depois iguale m_BC = (k - 3)/(4 - 2) = 2 => k - 3 = 4 => k = 7.",
+      setup: () => {
+        state.colinear.A = { x: 0, y: -1 };
+        state.colinear.B = { x: 2, y: 3 };
+        state.colinear.C = { x: 4, y: 4 };
+      },
+      onSolve: () => { state.colinear.C.y = 7; }
+    },
+    {
+      prompt: "Determine o valor de k para que os pontos P(-1, 5), Q(2, -1) e R(3, k) estejam alinhados.",
+      type: "number",
+      answer: -3,
+      hint: "Calcule m_PQ = (-1 - 5)/(2 - (-1)) = -6/3 = -2. Igualando m_QR = (k - (-1))/(3 - 2) = -2 => k + 1 = -2 => k = -3.",
+      setup: () => {
+        state.colinear.A = { x: -1, y: 5 };
+        state.colinear.B = { x: 2, y: -1 };
+        state.colinear.C = { x: 3, y: 0 };
+      },
+      onSolve: () => { state.colinear.C.y = -3; }
+    }
+  ],
+
+  reta: [
+    {
+      prompt: "Determine a equação reduzida da reta que passa pelos pontos A(1, 3) e B(3, 7). (Ex.: y = 2x + 1)",
+      type: "line",
+      m: 2,
+      q: 1,
+      hint: "m = (7 - 3)/(3 - 1) = 2. Usando P(x, y) e A(1, 3): y - 3 = 2(x - 1) => y - 3 = 2x - 2 => y = 2x + 1.",
+      setup: () => {
+        state.reta.A = { x: 1, y: 3 };
+        state.reta.B = { x: 3, y: 7 };
+      }
+    },
+    {
+      prompt: "Determine a equação reduzida da reta que passa pelos pontos A(-2, 4) e B(2, 2). (Ex.: y = -0,5x + 3 ou y = -1/2x + 3)",
+      type: "line",
+      m: -0.5,
+      q: 3,
+      hint: "m = (2 - 4)/(2 - (-2)) = -2/4 = -1/2 (-0,5). Usando A(-2, 4): y - 4 = -0,5(x + 2) => y = -0,5x + 3.",
+      setup: () => {
+        state.reta.A = { x: -2, y: 4 };
+        state.reta.B = { x: 2, y: 2 };
+      }
+    },
+    {
+      prompt: "Uma reta passa pelos pontos A(0, -5) e B(2, 1). Qual é o valor do seu coeficiente linear q?",
+      type: "number",
+      answer: -5,
+      hint: "O coeficiente linear q é a ordenada y do ponto onde a reta corta o eixo y (quando x = 0). Como A(0, -5) está na reta, q = -5.",
+      setup: () => {
+        state.reta.A = { x: 0, y: -5 };
+        state.reta.B = { x: 2, y: 1 };
+      }
+    }
+  ],
+
+  posicoes: [
+    {
+      prompt: "Qual é a posição relativa entre as retas r: y = 3x - 2 e s: y = 3x + 5?",
+      type: "select",
+      options: ["Paralelas distintas", "Coincidentes", "Concorrentes perpendiculares", "Concorrentes oblíquas"],
+      answer: "Paralelas distintas",
+      hint: "Compare os coeficientes: m_r = 3 e m_s = 3 (inclinações iguais), mas q_r = -2 e q_s = 5 (alturas diferentes). Logo, são paralelas distintas.",
+      setup: () => {
+        state.posicoes.mr = 3; state.posicoes.qr = -2;
+        state.posicoes.ms = 3; state.posicoes.qs = 5;
+      }
+    },
+    {
+      prompt: "Qual deve ser o coeficiente angular m_s de uma reta s perpendicular à reta r: y = 2x + 1?",
+      type: "number",
+      answer: -0.5,
+      hint: "Para retas perpendiculares, m_r · m_s = -1. Como m_r = 2, temos 2 · m_s = -1 => m_s = -1/2 = -0,5.",
+      setup: () => {
+        state.posicoes.mr = 2; state.posicoes.qr = 1;
+        state.posicoes.ms = -0.5; state.posicoes.qs = 4;
+      }
+    },
+    {
+      prompt: "Determine a coordenada x do ponto de interseção I(x, y) entre as retas r: y = 2x - 1 e s: y = -x + 5.",
+      type: "number",
+      answer: 2,
+      hint: "Iguale as expressões de y: 2x - 1 = -x + 5 => 3x = 6 => x = 2.",
+      setup: () => {
+        state.posicoes.mr = 2; state.posicoes.qr = -1;
+        state.posicoes.ms = -1; state.posicoes.qs = 5;
+      }
+    }
+  ],
+
+  circunferencia: [
+    {
+      prompt: "Na circunferência de equação reduzida (x - 3)² + (y + 2)² = 16, qual é a medida do raio r?",
+      type: "number",
+      answer: 4,
+      hint: "Na forma (x - x_C)² + (y - y_C)² = r², o termo independente à direita é r². Como r² = 16, temos r = √16 = 4.",
+      setup: () => {
+        state.circunferencia.C = { x: 3, y: -2 };
+        state.circunferencia.r = 4;
+        state.circunferencia.P = { x: 3, y: 2 };
+      }
+    },
+    {
+      prompt: "Na circunferência de equação (x + 1)² + (y - 4)² = 25, qual é a coordenada x_C do centro?",
+      type: "number",
+      answer: -1,
+      hint: "Reescreva (x + 1)² como (x - (-1))². Portanto, x_C = -1 (o sinal fica invertido em relação aos parênteses).",
+      setup: () => {
+        state.circunferencia.C = { x: -1, y: 4 };
+        state.circunferencia.r = 5;
+        state.circunferencia.P = { x: 2, y: 0 };
+      }
+    },
+    {
+      prompt: "Dada a circunferência x² + y² = 25, qual é a posição do ponto P(3, 4) em relação a ela?",
+      type: "select",
+      options: ["Interno", "Pertencente à circunferência", "Externo"],
+      answer: "Pertencente à circunferência",
+      hint: "Substitua P(3, 4) na equação: 3² + 4² = 9 + 16 = 25. Como deu exatamente igual a r² = 25, o ponto pertence à circunferência.",
+      setup: () => {
+        state.circunferencia.C = { x: 0, y: 0 };
+        state.circunferencia.r = 5;
+        state.circunferencia.P = { x: 3, y: 4 };
+      }
+    },
+    {
+      prompt: "Dada a equação geral x² + y² - 6x + 4y - 3 = 0, qual é o raio r dessa circunferência?",
+      type: "number",
+      answer: 4,
+      hint: "Agrupe e complete quadrados: (x² - 6x + 9) + (y² + 4y + 4) = 3 + 9 + 4 => (x - 3)² + (y + 2)² = 16 => r = 4.",
+      setup: () => {
+        state.circunferencia.C = { x: 3, y: -2 };
+        state.circunferencia.r = 4;
+        state.circunferencia.P = { x: 7, y: -2 };
+      }
+    }
+  ]
+};
+
+// ==========================================
+// MATH FORMATTING HELPERS
+// ==========================================
+function fmt(n) {
+  if (Math.abs(n) < 1e-9) return "0";
+  const rounded = Math.round(n * 100) / 100;
+  return String(rounded).replace('.', ',');
+}
+
+function fmtSign(n, withVar = "") {
+  if (Math.abs(n) < 1e-9) return "";
+  const absStr = fmt(Math.abs(n));
+  const sign = n > 0 ? " + " : " - ";
+  if (withVar && Math.abs(Math.abs(n) - 1) < 1e-9) {
+    return `${sign}${withVar}`;
+  }
+  return `${sign}${absStr}${withVar}`;
+}
+
+function fmtLead(n, withVar = "") {
+  if (Math.abs(n) < 1e-9) return "";
+  const absStr = fmt(Math.abs(n));
+  const sign = n < 0 ? "-" : "";
+  if (withVar && Math.abs(Math.abs(n) - 1) < 1e-9) {
+    return `${sign}${withVar}`;
+  }
+  return `${sign}${absStr}${withVar}`;
+}
+
+function parseUserNumber(raw) {
+  if (!raw) return NaN;
+  const clean = String(raw).trim().replace(',', '.');
+  if (clean.includes('/')) {
+    const parts = clean.split('/');
+    if (parts.length === 2) {
+      const num = parseFloat(parts[0]);
+      const den = parseFloat(parts[1]);
+      if (!isNaN(num) && !isNaN(den) && Math.abs(den) > 1e-9) {
+        return num / den;
+      }
+    }
+  }
+  return parseFloat(clean);
+}
+
+function parseUserLine(raw) {
+  if (!raw) return null;
+  let expr = String(raw).toLowerCase().replace(/\s+/g, '').replace(/,/g, '.');
+  if (expr.startsWith('y=')) expr = expr.slice(2);
+  if (!expr.includes('x')) {
+    const qOnly = parseUserNumber(expr);
+    return isNaN(qOnly) ? null : { m: 0, q: qOnly };
+  }
+  const idxX = expr.indexOf('x');
+  let mStr = expr.slice(0, idxX);
+  let qStr = expr.slice(idxX + 1);
+  let m = 1;
+  if (mStr === '' || mStr === '+') m = 1;
+  else if (mStr === '-') m = -1;
+  else m = parseUserNumber(mStr);
+
+  let q = 0;
+  if (qStr !== '') {
+    q = parseUserNumber(qStr);
+  }
+  if (isNaN(m) || isNaN(q)) return null;
+  return { m, q };
+}
+
+// ==========================================
+// CANVAS ENGINE (1:1 ASPECT RATIO + RETINA)
+// ==========================================
+const canvas = document.getElementById('planeCanvas');
+const ctx = canvas.getContext('2d');
+
+function getTransform() {
+  const rect = canvas.getBoundingClientRect();
+  const w = rect.width;
+  const h = rect.height;
+  const side = Math.min(w, h);
+  const scale = side / (2 * state.range);
+  const cx = w / 2;
+  const cy = h / 2;
+  return { w, h, cx, cy, scale };
+}
+
+function toScreen(wx, wy) {
+  const { cx, cy, scale } = getTransform();
+  return {
+    x: cx + wx * scale,
+    y: cy - wy * scale
+  };
+}
+
+function toWorld(sx, sy) {
+  const { cx, cy, scale } = getTransform();
+  let wx = (sx - cx) / scale;
+  let wy = (cy - sy) / scale;
+  if (state.snap) {
+    wx = Math.round(wx);
+    wy = Math.round(wy);
+  } else {
+    wx = Math.round(wx * 2) / 2;
+    wy = Math.round(wy * 2) / 2;
+  }
+  wx = Math.max(-state.range + 1, Math.min(state.range - 1, wx));
+  wy = Math.max(-state.range + 1, Math.min(state.range - 1, wy));
+  return { x: wx, y: wy };
+}
+
+function drawGrid() {
+  const { w, h, cx, cy, scale } = getTransform();
+  ctx.clearRect(0, 0, w, h);
+
+  // Grid lines
+  ctx.lineWidth = 1;
+  for (let i = -state.range; i <= state.range; i++) {
+    const sx = cx + i * scale;
+    const sy = cy - i * scale;
+
+    ctx.strokeStyle = i === 0 ? '#1C2833' : '#EBEDEF';
+    ctx.lineWidth = i === 0 ? 1.8 : 1;
+
+    ctx.beginPath();
+    ctx.moveTo(sx, 0);
+    ctx.lineTo(sx, h);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(0, sy);
+    ctx.lineTo(w, sy);
+    ctx.stroke();
+  }
+
+  // Axis arrows & labels
+  ctx.fillStyle = '#1C2833';
+  ctx.font = 'bold 12px sans-serif';
+  ctx.fillText('x', w - 14, cy - 8);
+  ctx.fillText('y', cx + 8, 14);
+
+  // Tick numbers
+  ctx.fillStyle = '#566573';
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  for (let i = -state.range + 1; i <= state.range - 1; i++) {
+    if (i === 0) continue;
+    const sx = cx + i * scale;
+    ctx.fillText(String(i), sx, cy + 5);
+  }
+
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'middle';
+  for (let i = -state.range + 1; i <= state.range - 1; i++) {
+    if (i === 0) continue;
+    const sy = cy - i * scale;
+    ctx.fillText(String(i), cx - 6, sy);
+  }
+  ctx.fillText('0', cx - 6, cy + 10);
+}
+
+function drawPoint(wx, wy, label, color, radius = 7) {
+  const s = toScreen(wx, wy);
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(s.x, s.y, radius + 3, 0, Math.PI * 2);
+  ctx.fillStyle = color + '28';
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(s.x, s.y, radius, 0, Math.PI * 2);
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = '#FFFFFF';
+  ctx.stroke();
+
+  ctx.font = 'bold 12px sans-serif';
+  ctx.fillStyle = '#1C2833';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText(`${label}(${fmt(wx)}; ${fmt(wy)})`, s.x + 10, s.y - 6);
+  ctx.restore();
+}
+
+function drawInfiniteLine(m, q, color, dashed = false) {
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2.4;
+  if (dashed) ctx.setLineDash([7, 5]);
+  const x1 = -state.range - 1;
+  const y1 = m * x1 + q;
+  const x2 = state.range + 1;
+  const y2 = m * x2 + q;
+  const p1 = toScreen(x1, y1);
+  const p2 = toScreen(x2, y2);
+  ctx.beginPath();
+  ctx.moveTo(p1.x, p1.y);
+  ctx.lineTo(p2.x, p2.y);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawVerticalLine(xVal, color, dashed = false) {
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2.4;
+  if (dashed) ctx.setLineDash([7, 5]);
+  const p1 = toScreen(xVal, -state.range - 1);
+  const p2 = toScreen(xVal, state.range + 1);
+  ctx.beginPath();
+  ctx.moveTo(p1.x, p1.y);
+  ctx.lineTo(p2.x, p2.y);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawSlopeTriangle(P1, P2, color) {
+  const s1 = toScreen(P1.x, P1.y);
+  const s2 = toScreen(P2.x, P2.y);
+  const corner = toScreen(P2.x, P1.y);
+
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.4;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(s1.x, s1.y);
+  ctx.lineTo(corner.x, corner.y);
+  ctx.lineTo(s2.x, s2.y);
+  ctx.stroke();
+
+  ctx.setLineDash([]);
+  ctx.fillStyle = color;
+  ctx.font = 'bold 11px sans-serif';
+  const dx = P2.x - P1.x;
+  const dy = P2.y - P1.y;
+  if (Math.abs(dx) > 0.1) {
+    ctx.textAlign = 'center';
+    ctx.fillText(`Δx=${fmt(dx)}`, (s1.x + corner.x) / 2, corner.y + (dy >= 0 ? 14 : -8));
+  }
+  if (Math.abs(dy) > 0.1) {
+    ctx.textAlign = 'left';
+    ctx.fillText(`Δy=${fmt(dy)}`, corner.x + 6, (corner.y + s2.y) / 2);
+  }
+  ctx.restore();
+}
+
+function renderCanvas() {
+  drawGrid();
+
+  if (state.module === 'colinear') {
+    const { A, B, C } = state.colinear;
+    const dxAB = B.x - A.x, dyAB = B.y - A.y;
+    const dxBC = C.x - B.x, dyBC = C.y - B.y;
+    const det = dxAB * dyBC - dyAB * dxBC;
+    const isCol = Math.abs(det) < 1e-6;
+
+    if (isCol) {
+      if (Math.abs(dxAB) < 1e-6 && Math.abs(dxBC) < 1e-6) {
+        drawVerticalLine(A.x, '#0E6251', false);
+      } else if (Math.abs(dxAB) >= 1e-6) {
+        const m = dyAB / dxAB;
+        const q = A.y - m * A.x;
+        drawInfiniteLine(m, q, '#0E6251', false);
+      } else {
+        const m = dyBC / dxBC;
+        const q = B.y - m * B.x;
+        drawInfiniteLine(m, q, '#0E6251', false);
+      }
+    } else {
+      const sA = toScreen(A.x, A.y);
+      const sB = toScreen(B.x, B.y);
+      const sC = toScreen(C.x, C.y);
+      ctx.save();
+      ctx.strokeStyle = '#2874A6';
+      ctx.lineWidth = 2.4;
+      ctx.beginPath();
+      ctx.moveTo(sA.x, sA.y);
+      ctx.lineTo(sB.x, sB.y);
+      ctx.stroke();
+
+      ctx.strokeStyle = '#D35400';
+      ctx.beginPath();
+      ctx.moveTo(sB.x, sB.y);
+      ctx.lineTo(sC.x, sC.y);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    drawSlopeTriangle(A, B, '#2874A6');
+    drawSlopeTriangle(B, C, '#D35400');
+
+    drawPoint(A.x, A.y, 'A', '#1B4F72');
+    drawPoint(B.x, B.y, 'B', '#2874A6');
+    drawPoint(C.x, C.y, 'C', isCol ? '#0E6251' : '#C0392B');
+  }
+
+  else if (state.module === 'reta') {
+    const { A, B, t } = state.reta;
+    const dx = B.x - A.x;
+    const dy = B.y - A.y;
+
+    if (Math.abs(dx) < 1e-6) {
+      drawVerticalLine(A.x, '#1B4F72', false);
+    } else {
+      const m = dy / dx;
+      const q = A.y - m * A.x;
+      drawInfiniteLine(m, q, '#1B4F72', false);
+      // Y-intercept highlight
+      if (Math.abs(q) <= state.range) {
+        const sq = toScreen(0, q);
+        ctx.save();
+        ctx.fillStyle = '#8E44AD';
+        ctx.beginPath();
+        ctx.arc(sq.x, sq.y, 4.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    drawSlopeTriangle(A, B, '#2874A6');
+
+    // Generic point P(x, y) sliding on line
+    const px = A.x + t * dx;
+    const py = A.y + t * dy;
+    const sP = toScreen(px, py);
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(sP.x, sP.y, 6, 0, Math.PI * 2);
+    ctx.fillStyle = '#E67E22';
+    ctx.fill();
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#FFFFFF';
+    ctx.stroke();
+    ctx.font = 'bold 12px sans-serif';
+    ctx.fillStyle = '#B9770E';
+    ctx.fillText(`P(x, y)`, sP.x + 9, sP.y + 14);
+    ctx.restore();
+
+    drawPoint(A.x, A.y, 'A', '#1B4F72');
+    drawPoint(B.x, B.y, 'B', '#2874A6');
+  }
+
+  else if (state.module === 'posicoes') {
+    const { mr, qr, ms, qs } = state.posicoes;
+    drawInfiniteLine(mr, qr, '#1B4F72', false);
+    const sameM = Math.abs(mr - ms) < 1e-6;
+    const sameQ = Math.abs(qr - qs) < 1e-6;
+    drawInfiniteLine(ms, qs, '#D35400', sameM && sameQ);
+
+    if (!sameM) {
+      const xi = (qs - qr) / (mr - ms);
+      const yi = mr * xi + qr;
+
+      // Perpendicular right-angle symbol
+      if (Math.abs(mr * ms + 1) < 1e-4) {
+        const sI = toScreen(xi, yi);
+        const ang = Math.atan(mr);
+        const sz = 14;
+        ctx.save();
+        ctx.translate(sI.x, sI.y);
+        ctx.rotate(-ang);
+        ctx.strokeStyle = '#0E6251';
+        ctx.lineWidth = 1.6;
+        ctx.strokeRect(0, -sz, sz, sz);
+        ctx.restore();
+      }
+
+      drawPoint(xi, yi, 'I', '#0E6251', 6.5);
+    }
+  }
+
+  else if (state.module === 'circunferencia') {
+    const { C, r, P } = state.circunferencia;
+    const { scale } = getTransform();
+    const sC = toScreen(C.x, C.y);
+    const sP = toScreen(P.x, P.y);
+    const sR = toScreen(C.x + r, C.y);
+
+    const dist = Math.hypot(P.x - C.x, P.y - C.y);
+    let pColor = '#2874A6';
+    if (Math.abs(dist - r) < 0.08) pColor = '#0E6251';
+    else if (dist > r) pColor = '#C0392B';
+
+    // Circle fill and stroke
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(sC.x, sC.y, r * scale, 0, Math.PI * 2);
+    ctx.fillStyle = '#EBF5FB88';
+    ctx.fill();
+    ctx.lineWidth = 2.5;
+    ctx.strokeStyle = '#1B4F72';
+    ctx.stroke();
+
+    // Radius line
+    ctx.setLineDash([5, 4]);
+    ctx.strokeStyle = '#2874A6';
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    ctx.moveTo(sC.x, sC.y);
+    ctx.lineTo(sR.x, sR.y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#1B4F72';
+    ctx.font = 'bold 11px sans-serif';
+    ctx.fillText(`r = ${fmt(r)}`, (sC.x + sR.x) / 2 - 12, sC.y - 6);
+
+    // Distance CP segment
+    ctx.strokeStyle = pColor;
+    ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    ctx.moveTo(sC.x, sC.y);
+    ctx.lineTo(sP.x, sP.y);
+    ctx.stroke();
+    ctx.restore();
+
+    // Radius handle
+    drawPoint(C.x + r, C.y, 'R', '#2874A6', 5.5);
+    drawPoint(C.x, C.y, 'C', '#1B4F72', 7);
+    drawPoint(P.x, P.y, 'P', pColor, 7);
+  }
+}
+
+function resizeCanvas() {
+  const wrapper = canvas.parentElement;
+  const rect = wrapper.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  renderCanvas();
+}
+
+window.addEventListener('resize', resizeCanvas);
+
+// ==========================================
+// POINTER INTERACTIONS (MOUSE + TOUCH)
+// ==========================================
+function getPointerPos(e) {
+  const rect = canvas.getBoundingClientRect();
+  return {
+    sx: e.clientX - rect.left,
+    sy: e.clientY - rect.top
+  };
+}
+
+function hitTest(sx, sy, wx, wy, threshold = 20) {
+  const s = toScreen(wx, wy);
+  return Math.hypot(sx - s.x, sy - s.y) <= threshold;
+}
+
+canvas.addEventListener('pointerdown', (e) => {
+  const { sx, sy } = getPointerPos(e);
+  if (state.module === 'colinear') {
+    const { A, B, C } = state.colinear;
+    if (hitTest(sx, sy, A.x, A.y)) state.dragging = 'A';
+    else if (hitTest(sx, sy, B.x, B.y)) state.dragging = 'B';
+    else if (hitTest(sx, sy, C.x, C.y)) state.dragging = 'C';
+  } else if (state.module === 'reta') {
+    const { A, B } = state.reta;
+    if (hitTest(sx, sy, A.x, A.y)) state.dragging = 'A';
+    else if (hitTest(sx, sy, B.x, B.y)) state.dragging = 'B';
+  } else if (state.module === 'circunferencia') {
+    const { C, r, P } = state.circunferencia;
+    if (hitTest(sx, sy, P.x, P.y)) state.dragging = 'P';
+    else if (hitTest(sx, sy, C.x + r, C.y)) state.dragging = 'R';
+    else if (hitTest(sx, sy, C.x, C.y)) state.dragging = 'C';
+  }
+  if (state.dragging) {
+    canvas.setPointerCapture(e.pointerId);
+  }
+});
+
+canvas.addEventListener('pointermove', (e) => {
+  const { sx, sy } = getPointerPos(e);
+  const wPos = toWorld(sx, sy);
+  state.cursor = wPos;
+  document.getElementById('cursorCoords').textContent = `Cursor: (${fmt(wPos.x)}; ${fmt(wPos.y)})`;
+
+  if (!state.dragging) return;
+
+  if (state.module === 'colinear') {
+    state.colinear[state.dragging] = { ...wPos };
+  } else if (state.module === 'reta') {
+    state.reta[state.dragging] = { ...wPos };
+  } else if (state.module === 'circunferencia') {
+    if (state.dragging === 'C') {
+      state.circunferencia.C = { ...wPos };
+    } else if (state.dragging === 'P') {
+      state.circunferencia.P = { ...wPos };
+    } else if (state.dragging === 'R') {
+      const rawR = Math.abs(wPos.x - state.circunferencia.C.x);
+      state.circunferencia.r = Math.max(1, Math.min(7, rawR || 1));
+    }
+  }
+  renderCanvas();
+  if (state.mode === 'explore') renderPanel();
+});
+
+canvas.addEventListener('pointerup', (e) => {
+  if (state.dragging) {
+    canvas.releasePointerCapture(e.pointerId);
+    state.dragging = null;
+  }
+});
+
+canvas.addEventListener('pointercancel', () => {
+  state.dragging = null;
+});
+
+// ==========================================
+// PANEL RENDERING (EXPLORE + EXERCISES)
+// ==========================================
+const dynamicPanel = document.getElementById('dynamicPanel');
+
+function renderPanel() {
+  if (state.mode === 'exercise') {
+    renderExercisePanel();
+    return;
+  }
+
+  if (state.module === 'colinear') {
+    const { A, B, C } = state.colinear;
+    const dxAB = B.x - A.x, dyAB = B.y - A.y;
+    const dxBC = C.x - B.x, dyBC = C.y - B.y;
+    const det = dxAB * dyBC - dyAB * dxBC;
+    const isCol = Math.abs(det) < 1e-6;
+
+    const mABStr = Math.abs(dxAB) < 1e-6 ? "Indefinido (vertical)" : fmt(dyAB / dxAB);
+    const mBCStr = Math.abs(dxBC) < 1e-6 ? "Indefinido (vertical)" : fmt(dyBC / dxBC);
+
+    dynamicPanel.innerHTML = `
+      <div class="section-title">Condição de Alinhamento de Três Pontos</div>
+      <div class="inputs-grid">
+        <div class="point-box">
+          <div class="point-box-header"><span class="dot" style="background:#1B4F72"></span> Ponto A</div>
+          <div class="coord-inputs">
+            x: <input type="number" step="0.5" value="${A.x}" data-pt="A" data-axis="x">
+            y: <input type="number" step="0.5" value="${A.y}" data-pt="A" data-axis="y">
+          </div>
+        </div>
+        <div class="point-box">
+          <div class="point-box-header"><span class="dot" style="background:#2874A6"></span> Ponto B</div>
+          <div class="coord-inputs">
+            x: <input type="number" step="0.5" value="${B.x}" data-pt="B" data-axis="x">
+            y: <input type="number" step="0.5" value="${B.y}" data-pt="B" data-axis="y">
+          </div>
+        </div>
+        <div class="point-box">
+          <div class="point-box-header"><span class="dot" style="background:${isCol ? '#0E6251' : '#C0392B'}"></span> Ponto C</div>
+          <div class="coord-inputs">
+            x: <input type="number" step="0.5" value="${C.x}" data-pt="C" data-axis="x">
+            y: <input type="number" step="0.5" value="${C.y}" data-pt="C" data-axis="y">
+          </div>
+        </div>
+      </div>
+
+      <div class="algebra-box">
+        <div class="step-item">
+          <span class="step-label">1. Inclinação entre A e B (m_AB)</span>
+          <div class="math-line">m<sub>AB</sub> = (${fmt(B.y)} - (${fmt(A.y)})) / (${fmt(B.x)} - (${fmt(A.x)})) = ${fmt(dyAB)} / ${fmt(dxAB)} = <strong>${mABStr}</strong></div>
+        </div>
+        <div class="step-item">
+          <span class="step-label">2. Inclinação entre B e C (m_BC)</span>
+          <div class="math-line">m<sub>BC</sub> = (${fmt(C.y)} - (${fmt(B.y)})) / (${fmt(C.x)} - (${fmt(B.x)})) = ${fmt(dyBC)} / ${fmt(dxBC)} = <strong>${mBCStr}</strong></div>
+        </div>
+        <div class="step-item">
+          <span class="step-label">3. Conclusão Geométrica</span>
+          <div style="margin-top:4px;">
+            <span class="status-badge ${isCol ? 'badge-green' : 'badge-red'}">
+              ${isCol ? 'PONTOS COLINEARES (m_AB = m_BC)' : 'NÃO COLINEARES (m_AB ≠ m_BC)'}
+            </span>
+          </div>
+        </div>
+      </div>
+    `;
+
+    dynamicPanel.querySelectorAll('input[data-pt]').forEach(inp => {
+      inp.addEventListener('change', (e) => {
+        const pt = e.target.dataset.pt;
+        const axis = e.target.dataset.axis;
+        const v = parseFloat(e.target.value);
+        if (!isNaN(v)) {
+          state.colinear[pt][axis] = v;
+          renderCanvas();
+          renderPanel();
+        }
+      });
+    });
+  }
+
+  else if (state.module === 'reta') {
+    const { A, B, t } = state.reta;
+    const dx = B.x - A.x;
+    const dy = B.y - A.y;
+
+    let step1 = '', step2 = '', step3 = '', step4 = '';
+    if (Math.abs(dx) < 1e-6) {
+      step1 = `Δx = ${fmt(B.x)} - (${fmt(A.x)}) = 0 (reta vertical; não existe m)`;
+      step2 = `Todos os pontos possuem abscissa x = ${fmt(A.x)}`;
+      step3 = `Equação vertical: <strong>x = ${fmt(A.x)}</strong> (não possui forma y = mx + q)`;
+      step4 = `Equação Geral: <strong>x ${fmtSign(-A.x)} = 0</strong>`;
+    } else {
+      const m = dy / dx;
+      const q = A.y - m * A.x;
+      step1 = `m = (${fmt(B.y)} - (${fmt(A.y)})) / (${fmt(B.x)} - (${fmt(A.x)})) = ${fmt(dy)} / ${fmt(dx)} = <strong>${fmt(m)}</strong>`;
+      step2 = `(y - (${fmt(A.y)})) / (x - (${fmt(A.x)})) = ${fmt(m)} &nbsp;⇒&nbsp; y ${fmtSign(-A.y)} = ${fmt(m)}(x ${fmtSign(-A.x)})`;
+      const rhs = `${fmtLead(m, 'x')}${fmtSign(q)}` || '0';
+      step3 = `y = ${fmtLead(m, 'x')}${fmtSign(-m * A.x)}${fmtSign(A.y)} &nbsp;⇒&nbsp; <strong>y = ${rhs}</strong>`;
+      const gen = `${fmtLead(m, 'x')}${fmtSign(-1, 'y')}${fmtSign(q)} = 0`;
+      step4 = `<strong>${gen}</strong>`;
+    }
+
+    dynamicPanel.innerHTML = `
+      <div class="section-title">Da Inclinação à Equação da Reta</div>
+      <div class="inputs-grid">
+        <div class="point-box">
+          <div class="point-box-header"><span class="dot" style="background:#1B4F72"></span> Ponto A</div>
+          <div class="coord-inputs">
+            x: <input type="number" step="0.5" value="${A.x}" data-pt="A" data-axis="x">
+            y: <input type="number" step="0.5" value="${A.y}" data-pt="A" data-axis="y">
+          </div>
+        </div>
+        <div class="point-box">
+          <div class="point-box-header"><span class="dot" style="background:#2874A6"></span> Ponto B</div>
+          <div class="coord-inputs">
+            x: <input type="number" step="0.5" value="${B.x}" data-pt="B" data-axis="x">
+            y: <input type="number" step="0.5" value="${B.y}" data-pt="B" data-axis="y">
+          </div>
+        </div>
+      </div>
+
+      <div class="point-box">
+        <div class="point-box-header"><span class="dot" style="background:#E67E22"></span> Deslizar Ponto Genérico P(x, y) sobre a reta</div>
+        <input type="range" id="sliderP" min="-0.4" max="1.4" step="0.05" value="${t}" style="width:100%;">
+      </div>
+
+      <div class="algebra-box">
+        <div class="step-item">
+          <span class="step-label">Etapa 1 — Coeficiente angular (m)</span>
+          <div class="math-line">${step1}</div>
+        </div>
+        <div class="step-item">
+          <span class="step-label">Etapa 2 — Igualdade com o ponto genérico P(x, y)</span>
+          <div class="math-line">${step2}</div>
+        </div>
+        <div class="step-item">
+          <span class="step-label">Etapa 3 — Isolando y (Equação Reduzida: y = mx + q)</span>
+          <div class="math-line">${step3}</div>
+        </div>
+        <div class="step-item">
+          <span class="step-label">Etapa 4 — Igualando a zero (Equação Geral)</span>
+          <div class="math-line">${step4}</div>
+        </div>
+      </div>
+    `;
+
+    dynamicPanel.querySelectorAll('input[data-pt]').forEach(inp => {
+      inp.addEventListener('change', (e) => {
+        const pt = e.target.dataset.pt;
+        const axis = e.target.dataset.axis;
+        const v = parseFloat(e.target.value);
+        if (!isNaN(v)) {
+          state.reta[pt][axis] = v;
+          renderCanvas();
+          renderPanel();
+        }
+      });
+    });
+
+    document.getElementById('sliderP').addEventListener('input', (e) => {
+      state.reta.t = parseFloat(e.target.value);
+      renderCanvas();
+    });
+  }
+
+  else if (state.module === 'posicoes') {
+    const { mr, qr, ms, qs } = state.posicoes;
+    const sameM = Math.abs(mr - ms) < 1e-6;
+    const sameQ = Math.abs(qr - qs) < 1e-6;
+    const isPerp = Math.abs(mr * ms + 1) < 1e-4;
+
+    let statusText = '';
+    let badgeCls = 'badge-blue';
+    let interHtml = '';
+
+    if (sameM && sameQ) {
+      statusText = 'RETAS COINCIDENTES (m_r = m_s e q_r = q_s)';
+      badgeCls = 'badge-green';
+      interHtml = 'Infinitos pontos em comum (são a mesma reta).';
+    } else if (sameM && !sameQ) {
+      statusText = 'RETAS PARALELAS DISTINTAS (m_r = m_s e q_r ≠ q_s)';
+      badgeCls = 'badge-amber';
+      interHtml = 'Nenhum ponto em comum (não se cruzam).';
+    } else {
+      const xi = (qs - qr) / (mr - ms);
+      const yi = mr * xi + qr;
+      if (isPerp) {
+        statusText = 'CONCORRENTES PERPENDICULARES (m_r · m_s = -1)';
+        badgeCls = 'badge-green';
+      } else {
+        statusText = 'CONCORRENTES OBLÍQUAS (m_r ≠ m_s)';
+        badgeCls = 'badge-blue';
+      }
+      interHtml = `${fmtLead(mr, 'x')}${fmtSign(qr)} = ${fmtLead(ms, 'x')}${fmtSign(qs)} &nbsp;⇒&nbsp; <strong>I(${fmt(xi)}; ${fmt(yi)})</strong>`;
+    }
+
+    dynamicPanel.innerHTML = `
+      <div class="section-title">Posições Relativas entre Duas Retas</div>
+      <div class="preset-row">
+        <button type="button" class="preset-btn" data-preset="paralelas">Paralelas Distintas</button>
+        <button type="button" class="preset-btn" data-preset="coincidentes">Coincidentes</button>
+        <button type="button" class="preset-btn" data-preset="concorrentes">Concorrentes</button>
+        <button type="button" class="preset-btn" data-preset="perpendiculares">Perpendiculares (90°)</button>
+      </div>
+
+      <div class="inputs-grid">
+        <div class="point-box">
+          <div class="point-box-header"><span class="dot" style="background:#1B4F72"></span> Reta r: y = m_r·x + q_r</div>
+          <div class="coord-inputs">
+            m<sub>r</sub>: <input type="number" step="0.5" value="${mr}" data-line="mr">
+            q<sub>r</sub>: <input type="number" step="0.5" value="${qr}" data-line="qr">
+          </div>
+        </div>
+        <div class="point-box">
+          <div class="point-box-header"><span class="dot" style="background:#D35400"></span> Reta s: y = m_s·x + q_s</div>
+          <div class="coord-inputs">
+            m<sub>s</sub>: <input type="number" step="0.5" value="${ms}" data-line="ms">
+            q<sub>s</sub>: <input type="number" step="0.5" value="${qs}" data-line="qs">
+          </div>
+        </div>
+      </div>
+
+      <div class="algebra-box">
+        <div class="step-item">
+          <span class="step-label">1. Comparação dos Coeficientes</span>
+          <div class="math-line">
+            r: y = ${fmtLead(mr, 'x')}${fmtSign(qr)} &nbsp;|&nbsp; s: y = ${fmtLead(ms, 'x')}${fmtSign(qs)}
+          </div>
+        </div>
+        <div class="step-item">
+          <span class="step-label">2. Classificação</span>
+          <div style="margin-top:4px;"><span class="status-badge ${badgeCls}">${statusText}</span></div>
+        </div>
+        <div class="step-item">
+          <span class="step-label">3. Ponto de Interseção (Sistema)</span>
+          <div class="math-line">${interHtml}</div>
+        </div>
+      </div>
+    `;
+
+    dynamicPanel.querySelectorAll('input[data-line]').forEach(inp => {
+      inp.addEventListener('change', (e) => {
+        const key = e.target.dataset.line;
+        const v = parseFloat(e.target.value);
+        if (!isNaN(v)) {
+          state.posicoes[key] = v;
+          renderCanvas();
+          renderPanel();
+        }
+      });
+    });
+
+    dynamicPanel.querySelectorAll('button[data-preset]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const p = e.target.dataset.preset;
+        if (p === 'paralelas') {
+          state.posicoes = { ...state.posicoes, mr: 2, qr: -2, ms: 2, qs: 3 };
+        } else if (p === 'coincidentes') {
+          state.posicoes = { ...state.posicoes, mr: 1.5, qr: 1, ms: 1.5, qs: 1 };
+        } else if (p === 'concorrentes') {
+          state.posicoes = { ...state.posicoes, mr: 2, qr: -1, ms: -1, qs: 5 };
+        } else if (p === 'perpendiculares') {
+          state.posicoes = { ...state.posicoes, mr: 2, qr: -1, ms: -0.5, qs: 4 };
+        }
+        renderCanvas();
+        renderPanel();
+      });
+    });
+  }
+
+  else if (state.module === 'circunferencia') {
+    const { C, r, P } = state.circunferencia;
+    const dx = P.x - C.x;
+    const dy = P.y - C.y;
+    const d2 = dx * dx + dy * dy;
+    const r2 = r * r;
+
+    let posLabel = 'PONTO PERTENCENTE À CIRCUNFERÊNCIA (d = r)';
+    let posBadge = 'badge-green';
+    if (d2 < r2 - 0.05) {
+      posLabel = 'PONTO INTERNO À CIRCUNFERÊNCIA (d < r)';
+      posBadge = 'badge-blue';
+    } else if (d2 > r2 + 0.05) {
+      posLabel = 'PONTO EXTERNO À CIRCUNFERÊNCIA (d > r)';
+      posBadge = 'badge-red';
+    }
+
+    const termX = Math.abs(C.x) < 1e-9 ? 'x²' : `(x ${fmtSign(-C.x)})²`;
+    const termY = Math.abs(C.y) < 1e-9 ? 'y²' : `(y ${fmtSign(-C.y)})²`;
+    const D = -2 * C.x;
+    const E = -2 * C.y;
+    const F = C.x * C.x + C.y * C.y - r2;
+
+    dynamicPanel.innerHTML = `
+      <div class="section-title">Equação da Circunferência e Posição de Ponto</div>
+      <div class="inputs-grid">
+        <div class="point-box">
+          <div class="point-box-header"><span class="dot" style="background:#1B4F72"></span> Centro C(x_C, y_C)</div>
+          <div class="coord-inputs">
+            x<sub>C</sub>: <input type="number" step="0.5" value="${C.x}" data-circ="cx">
+            y<sub>C</sub>: <input type="number" step="0.5" value="${C.y}" data-circ="cy">
+          </div>
+        </div>
+        <div class="point-box">
+          <div class="point-box-header"><span class="dot" style="background:#2874A6"></span> Raio (r)</div>
+          <div class="coord-inputs">
+            r: <input type="number" min="0.5" max="7" step="0.5" value="${r}" data-circ="r">
+          </div>
+        </div>
+        <div class="point-box">
+          <div class="point-box-header"><span class="dot" style="background:#E67E22"></span> Ponto Teste P</div>
+          <div class="coord-inputs">
+            x<sub>P</sub>: <input type="number" step="0.5" value="${P.x}" data-circ="px">
+            y<sub>P</sub>: <input type="number" step="0.5" value="${P.y}" data-circ="py">
+          </div>
+        </div>
+      </div>
+
+      <div class="algebra-box">
+        <div class="step-item">
+          <span class="step-label">1. Equação Reduzida: (x - x_C)² + (y - y_C)² = r²</span>
+          <div class="math-line"><strong>${termX} + ${termY} = ${fmt(r2)}</strong></div>
+        </div>
+        <div class="step-item">
+          <span class="step-label">2. Equação Geral (Desenvolvendo os produtos notáveis)</span>
+          <div class="math-line"><strong>x² + y²${fmtSign(D, 'x')}${fmtSign(E, 'y')}${fmtSign(F)} = 0</strong></div>
+        </div>
+        <div class="step-item">
+          <span class="step-label">3. Teste de Posição do Ponto P(${fmt(P.x)}; ${fmt(P.y)})</span>
+          <div class="math-line">d<sub>PC</sub>² = (${fmt(P.x)} - (${fmt(C.x)}))² + (${fmt(P.y)} - (${fmt(C.y)}))² = <strong>${fmt(d2)}</strong> &nbsp;(r² = ${fmt(r2)})</div>
+          <div style="margin-top:5px;"><span class="status-badge ${posBadge}">${posLabel}</span></div>
+        </div>
+      </div>
+    `;
+
+    dynamicPanel.querySelectorAll('input[data-circ]').forEach(inp => {
+      inp.addEventListener('change', (e) => {
+        const key = e.target.dataset.circ;
+        const v = parseFloat(e.target.value);
+        if (isNaN(v)) return;
+        if (key === 'cx') state.circunferencia.C.x = v;
+        else if (key === 'cy') state.circunferencia.C.y = v;
+        else if (key === 'r') state.circunferencia.r = Math.max(0.5, Math.min(7, v));
+        else if (key === 'px') state.circunferencia.P.x = v;
+        else if (key === 'py') state.circunferencia.P.y = v;
+        renderCanvas();
+        renderPanel();
+      });
+    });
+  }
+}
+
+function renderExercisePanel() {
+  const mod = state.module;
+  const list = EXERCISES[mod];
+  const idx = state[mod].exIdx;
+  const ex = list[idx];
+
+  const btnsHtml = list.map((_, i) => {
+    const key = `${mod}_${i}`;
+    const isAct = i === idx ? 'active' : '';
+    const isSol = state.solved[key] ? 'solved' : '';
+    return `<button type="button" class="ex-num-btn ${isAct} ${isSol}" data-ex="${i}">Questão ${i + 1}</button>`;
+  }).join('');
+
+  let inputHtml = '';
+  if (ex.type === 'select') {
+    const opts = ex.options.map(o => `<option value="${o}">${o}</option>`).join('');
+    inputHtml = `<select id="exAnswerInput"><option value="">Selecione a resposta...</option>${opts}</select>`;
+  } else {
+    const ph = ex.type === 'line' ? 'Digite a equação (ex: y = 2x + 1)' : 'Digite o valor numérico';
+    inputHtml = `<input type="text" id="exAnswerInput" placeholder="${ph}" autocomplete="off">`;
+  }
+
+  dynamicPanel.innerHTML = `
+    <div class="section-title">Exercícios Guiados com Verificação Imediata</div>
+    <div class="ex-selector">${btnsHtml}</div>
+    <div class="ex-card">
+      <div class="ex-prompt"><strong>Questão ${idx + 1}:</strong> ${ex.prompt}</div>
+      <div class="ex-input-row">
+        ${inputHtml}
+        <button type="button" class="btn-primary" id="btnCheckEx">Verificar</button>
+        <button type="button" class="btn-secondary" id="btnHintEx">Ver Dica / Passo a Passo</button>
+      </div>
+      <div class="feedback-box" id="exFeedback"></div>
+      <div class="hint-box" id="exHint"><strong>Resolução comentada:</strong> ${ex.hint}</div>
+    </div>
+  `;
+
+  dynamicPanel.querySelectorAll('button[data-ex]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const nextIdx = parseInt(e.target.dataset.ex, 10);
+      state[mod].exIdx = nextIdx;
+      if (EXERCISES[mod][nextIdx].setup) EXERCISES[mod][nextIdx].setup();
+      renderCanvas();
+      renderExercisePanel();
+    });
+  });
+
+  document.getElementById('btnHintEx').addEventListener('click', () => {
+    document.getElementById('exHint').classList.toggle('visible');
+  });
+
+  document.getElementById('btnCheckEx').addEventListener('click', () => {
+    const raw = document.getElementById('exAnswerInput').value;
+    const fb = document.getElementById('exFeedback');
+    let correct = false;
+
+    if (ex.type === 'select') {
+      correct = raw === ex.answer;
+    } else if (ex.type === 'number') {
+      const num = parseUserNumber(raw);
+      correct = !isNaN(num) && Math.abs(num - ex.answer) < 1e-3;
+    } else if (ex.type === 'line') {
+      const parsed = parseUserLine(raw);
+      correct = parsed !== null && Math.abs(parsed.m - ex.m) < 1e-3 && Math.abs(parsed.q - ex.q) < 1e-3;
+    }
+
+    if (correct) {
+      state.solved[`${mod}_${idx}`] = true;
+      fb.className = 'feedback-box ok';
+      fb.textContent = 'Correto! Confira a representação geométrica correspondente no plano cartesiano.';
+      if (ex.onSolve) {
+        ex.onSolve();
+        renderCanvas();
+      }
+      const activeBtn = dynamicPanel.querySelector(`button[data-ex="${idx}"]`);
+      if (activeBtn) activeBtn.classList.add('solved');
+    } else {
+      fb.className = 'feedback-box err';
+      fb.textContent = 'Ainda não confere. Revise os sinais e coeficientes ou clique em "Ver Dica / Passo a Passo".';
+    }
+  });
+}
+
+// ==========================================
+// TAB & MODE NAVIGATION
+// ==========================================
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+    state.module = e.target.dataset.module;
+    if (state.mode === 'exercise') {
+      const idx = state[state.module].exIdx;
+      if (EXERCISES[state.module][idx].setup) EXERCISES[state.module][idx].setup();
+    }
+    renderCanvas();
+    renderPanel();
+  });
+});
+
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+    state.mode = e.target.dataset.mode;
+    if (state.mode === 'exercise') {
+      const idx = state[state.module].exIdx;
+      if (EXERCISES[state.module][idx].setup) EXERCISES[state.module][idx].setup();
+    }
+    renderCanvas();
+    renderPanel();
+  });
+});
+
+document.getElementById('snapGrid').addEventListener('change', (e) => {
+  state.snap = e.target.checked;
+});
+
+document.getElementById('btnResetView').addEventListener('click', () => {
+  if (state.module === 'colinear') {
+    state.colinear.A = { x: -2, y: -1 };
+    state.colinear.B = { x: 1, y: 2 };
+    state.colinear.C = { x: 4, y: 5 };
+  } else if (state.module === 'reta') {
+    state.reta.A = { x: -1, y: 1 };
+    state.reta.B = { x: 2, y: 7 };
+    state.reta.t = 0.5;
+  } else if (state.module === 'posicoes') {
+    state.posicoes.mr = 2; state.posicoes.qr = -1;
+    state.posicoes.ms = -0.5; state.posicoes.qs = 4;
+  } else if (state.module === 'circunferencia') {
+    state.circunferencia.C = { x: 1, y: 1 };
+    state.circunferencia.r = 4;
+    state.circunferencia.P = { x: 4, y: 3 };
+  }
+  renderCanvas();
+  renderPanel();
+});
+
+// Initial render
+resizeCanvas();
+renderPanel();
+</script>
+</body>
+</html>
